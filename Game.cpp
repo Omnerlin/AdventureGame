@@ -5,35 +5,80 @@ void Game::init(sf::RenderWindow *window) {
 	mapManager.loadMap("geebo.txt", groundTexture, 0, 0);
 	mapManager.loadMap("map2col.txt", groundTexture, 0, 576);
 	mapManager.loadMap("3rdmap.txt", groundTexture, -1024, 576);
+	mapManager.loadMap("map4.txt", groundTexture, 1024, 576);
 	
+	currentview.setCenter(mapManager.mapArray[0].view.getCenter());
 	gameView.setSize(mapManager.mapArray[0].view.getSize());
 	gameView.setCenter(mapManager.mapArray[0].view.getCenter());
 	
+
 	window->setView(gameView);
+	playerHUD.view.setCenter(gameView.getCenter());
+	playerHUD.view.setSize(gameView.getSize());
+	playerHUD.view.setViewport(sf::FloatRect(0, 0, 1, 0.1));
+
+}
+
+void Game::checkPlayerHitEnemy()
+{
+	if (player->sword.hitBoxActive == true) {
+		for (int i = 0; i < enemyManager.enemyArray.size(); ++i)
+		{
+			if (enemyManager.enemyArray[i].active && !enemyManager.enemyArray[i].recovering && std::abs(enemyManager.enemyArray[i].rect.getPosition().x - player->rect.getPosition().x <= 300 )
+				&& std::abs(enemyManager.enemyArray[i].rect.getPosition().y - player->rect.getPosition().y <= 300))
+			{
+				if (player->sword.hitBox.rect.getGlobalBounds().intersects(enemyManager.enemyArray[i].rect.getGlobalBounds()))
+				{
+					if (player->sword.hitBox.checkIntersect(enemyManager.enemyArray[i].hitBox))
+					{
+						//enemyManager.enemyArray[i].health -= 1;
+						enemyManager.enemyArray[i].recovering = true;
+						enemyManager.enemyArray[i].recoveryClock.restart();
+						std::cout << "Enemy Hit " << std::endl;
+					}
+				}
+			}
+		}
+	}
 }
 
 GAMESTATE Game::update(sf::RenderWindow *window, sf::Time elapsed) {
 
-			testDebugging();
-			updateViews(window);
-			updatePlayerMovement(player, elapsed);
-			updateActiveMaps();
-			mapManager.drawMapsLayerOne(window, debug);
-			mapManager.drawMapsLayerTwo(window, debug);
-			window->draw(player->rect);
-			if (sf::Keyboard::isKeyPressed(sf::Keyboard::M))
-			{
-				return GAMESTATE::MENU;
-			}
-			return this->returnState;
+	
+	testDebugging();
+	updateViews(window, elapsed);
+	updatePlayerMovement(player, elapsed);
+	updateActiveMaps();
+	mapManager.drawMapsLayerOne(window, debug);
+	mapManager.drawMapsLayerTwo(window, debug);
+	enemyManager.drawEnemies(window);
+	enemyManager.updateEnemies();
+	player->update(window, elapsed);
+	player->sword.update(window);
+	checkPlayerHitEnemy();
+	window->draw(player->rect);
+
+	//window->setView(playerHUD.view);
+	//playerHUD.update();
+	//playerHUD.drawElements(window);
+
+	//window->setView(gameView);
+
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::M))
+		{
+			return GAMESTATE::MENU;
+		}
+	return this->returnState;
 }
 
 void Game::updatePlayerMovement(Player *player, sf::Time elapsed)
 {
 	float timeElapsed = elapsed.asMilliseconds();
 	float deltaTime = timeElapsed - player->timeStamp;
-	player->m_moveSpeed = (player->baseMoveSpeed * deltaTime)/3;
+	//std::cout << timeElapsed << std::endl;
 	
+	player->m_moveSpeed = (player->baseMoveSpeed * deltaTime);
+	//std::cout << player->m_moveSpeed << std::endl;
 	player->oldPositionX = player->rect.getPosition().x;
 	player->oldPositionY = player->rect.getPosition().y;
 
@@ -141,22 +186,25 @@ void Game::testDebugging()
 	}
 }
 
-void Game::updateViews(sf::RenderWindow *window) {
-	gameView.move((currentview.getCenter().x - gameView.getCenter().x) * 0.3, (currentview.getCenter().y - gameView.getCenter().y) * 0.3);
+void Game::updateViews(sf::RenderWindow *window, sf::Time elapsed) {
+	float timeElapsed = elapsed.asMilliseconds();
+	float deltaTime = timeElapsed - viewTimeStamp;
+	gameView.move(((currentview.getCenter().x - gameView.getCenter().x) * 0.01) * deltaTime, ((currentview.getCenter().y - gameView.getCenter().y) * 0.01) * deltaTime);
+	//sf::Vector2f converted = window->mapPixelToCoords(sf::Mouse::getPosition(*window));
+	//gameView.setCenter((player->rect.getPosition().x + converted.x) / 2 , (player->rect.getPosition().y + converted.y) / 2 );
+
 	window->setView(gameView);
-	
-	//std::cout << "X: " << gameView.getCenter().x << " Y: " << gameView.getCenter().y << std::endl;
 	for (int i = 0; i < mapManager.mapArray.size(); i++) {
 		if (player->rect.getGlobalBounds().intersects(mapManager.mapArray[i].rect.getGlobalBounds())) {
 			currentview = mapManager.mapArray[i].view;
 		}
 	}
 	
+	viewTimeStamp = elapsed.asMilliseconds();
 }
 
 Game::Game()
 {
-	//groundTexture->loadFromFile("media\\grassTiles.png");
 	groundTexture->loadFromFile("media\\tileMap.png");
 	std::cout << "Constructor Called";
 }

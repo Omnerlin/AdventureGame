@@ -8,6 +8,7 @@ class Engine
 {
 
 private:
+	int fps = 0;
 	sf::RenderWindow *window = new sf::RenderWindow;
 	//Game *game = new Game;
 	State *state = new Menu;

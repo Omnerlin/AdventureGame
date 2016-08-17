@@ -6,6 +6,8 @@ class Menu : public State
 {
 
 private:
+	float titleTextTimeStamp;
+
 	ClickableButton startButton;
 	ClickableButton quitButton;
 	sf::Font font;
@@ -15,6 +17,7 @@ private:
 	sf::RectangleShape background;
 
 public:
+
 	void updateTitleText(sf::Time elapsed);
 	GAMESTATE returnState = GAMESTATE::MENU;
 	void init(sf::RenderWindow *window);

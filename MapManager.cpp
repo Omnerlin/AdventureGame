@@ -71,19 +71,19 @@ void MapManager::testMapPlayerCollisions(Player *player, int index) {
 						while (player->rect.getGlobalBounds().intersects(mapArray[i].tileArray[j].rect.getGlobalBounds())) {
 							if (index == 1) {
 								if (player->oldPositionX < player->rect.getPosition().x) {
-									player->rect.move(-1, 0);
+									player->rect.setPosition(mapArray[i].tileArray[j].rect.getPosition().x - player->rect.getSize().x, player->rect.getPosition().y);
 								}
 								else if (player->oldPositionX > player->rect.getPosition().x) {
-									player->rect.move(1, 0);
+									player->rect.setPosition(mapArray[i].tileArray[j].rect.getPosition().x + player->rect.getSize().x, player->rect.getPosition().y);
 								}
 							}
 							else if (index == 2)
 							{
 								if (player->oldPositionY < player->rect.getPosition().y) {
-									player->rect.move(0, -1);
+									player->rect.setPosition(player->rect.getPosition().x, mapArray[i].tileArray[j].rect.getPosition().y - player->rect.getSize().y);
 								}
 								else if (player->oldPositionY > player->rect.getPosition().y) {
-									player->rect.move(0, 1);
+									player->rect.setPosition(player->rect.getPosition().x, mapArray[i].tileArray[j].rect.getPosition().y + player->rect.getSize().y);
 								}
 							}
 

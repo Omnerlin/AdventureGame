@@ -9,13 +9,14 @@ Menu::Menu()
 }
 
 void Menu::init(sf::RenderWindow *window) {
-	startButton.rect.setPosition(window->getSize().x / 2 - startButton.rect.getSize().x/2, window->getSize().y / 1.5);
+	startButton.rect.setPosition(window->getDefaultView().getSize().x / 2 - startButton.rect.getSize().x/2, window->getDefaultView().getSize().y / 1.5);
 	quitButton.rect.setPosition(200, 500);
 	font.loadFromFile("fonts\\computerFont.ttf");
 	titleText.setFont(font);
 	titleText.setString("AdventureGame!");
 	titleText.setCharacterSize(70);
-	titleText.setPosition(window->getSize().x / 3.5, window->getSize().y / 5);
+	//titleText.setPosition(window->getSize().x / 3.5, window->getSize().y / 5);
+	titleText.setPosition(window->getDefaultView().getSize().x / 3.5, window->getDefaultView().getSize().y / 5);
 	originalTitleYPos = titleText.getPosition().y;
 	background.setPosition(0, 0);
 	background.setSize(sf::Vector2f(window->getSize().x, window->getSize().y));
@@ -24,7 +25,11 @@ void Menu::init(sf::RenderWindow *window) {
 
 void Menu::updateTitleText(sf::Time elapsed)
 {
-	titleText.move(0, 0.25 * (sin(elapsed.asMilliseconds() * 0.002)));
+	float timeElapsed = elapsed.asMilliseconds();
+	float deltaTime = timeElapsed - titleTextTimeStamp;
+	titleText.move(0, 0.05 * (sin(elapsed.asMilliseconds() * 0.002)) * deltaTime);
+
+	titleTextTimeStamp = elapsed.asMilliseconds();
 }
 
 void Menu::updateBackgroundColor(sf::Time elapsed)

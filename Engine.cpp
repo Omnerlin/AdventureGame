@@ -3,7 +3,7 @@
 void Engine::init()
 {
 	window->create(sf::VideoMode(SCREENWIDTH, SCREENHEIGHT), "AdventureGame");
-	//window->setFramerateLimit(60);
+	//window->setFramerateLimit(30);
 	window->setVerticalSyncEnabled(true);
 	state->init(window);
 }
@@ -36,14 +36,25 @@ void Engine::switchStates(GAMESTATE state)
 void Engine::update()
 {
 	sf::Clock gameClock;
+	//sf::Clock fpsClock;
 	while (window->isOpen())
 	{
+		//fps++;
 		sf::Time elapsed = gameClock.getElapsedTime();
+		//sf::Time fpsElapsed = fpsClock.getElapsedTime();
 		sf::Event event;
 		while (window->pollEvent(event))
 		{
 			if (event.type == sf::Event::Closed)
 				window->close();
+
+			if (event.type == sf::Event::MouseButtonReleased)
+			{
+				if (event.mouseButton.button == sf::Mouse::Left) {
+
+				}
+				//std::cout << "Mouse Button Released" << std::endl;
+			}
 		}
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
 			window->close();
@@ -52,9 +63,16 @@ void Engine::update()
 		currentGamestate = state->update(window, elapsed);
 		if (currentGamestate != state->returnState)
 		{
+			gameClock.restart();
 			switchStates(currentGamestate);
 		}
 		window->display();
+		//if (fpsElapsed.asSeconds() >= 1.0)
+		//{
+		//	std::cout << fps << std::endl;
+		//	fps = 0;
+		//	fpsClock.restart();
+		//}
 	}
 }
 
