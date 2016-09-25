@@ -218,7 +218,7 @@ void Game::updatePlayerMovement(Player *player, sf::Time elapsed)
 
 	player->gridPositionX = (int)player->rect.getPosition().x / 32;
 	player->gridPositionY = (int)player->rect.getPosition().y / 32;
-	std::cout << "X: " << player->gridPositionX << "Y: " << player->gridPositionY << std::endl;
+	//std::cout << "X: " << player->gridPositionX << "Y: " << player->gridPositionY << std::endl;
 	
 	player->newPositionX = player->rect.getPosition().x;
 	player->newPositionY = player->rect.getPosition().y;
