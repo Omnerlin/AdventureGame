@@ -12,6 +12,11 @@ void MapManager::loadMap(std::string fileName, sf::Texture *texture, float x, fl
 	map.drawAndCollisionRect.setPosition(map.getPosition().x - map.tileArray[0].getWidth()*4, map.getPosition().y - map.tileArray[0].getHeight()*4);
 	map.drawAndCollisionRect.setSize(sf::Vector2f(map.view.getSize().x + map.tileArray[0].getWidth()*8, map.view.getSize().y + map.tileArray[0].getHeight()*8));
 	mapArray.push_back(map);
+	if(map.getPosition().x / 1024 > width)
+	width = map.getPosition().x / 1024 + 1; // Add one, since origins start at zero.
+
+	if(map.getPosition().y > height)
+	height = map.getPosition().y / 576 + 1;
 }
 
 void MapManager::addMap(Map map) {
@@ -23,17 +28,6 @@ void MapManager::drawMapsLayerOne(sf::RenderWindow *window, bool debug) {
 	for (int i = 0; i < mapArray.size(); i++) {
 		if (mapArray[i].active)
 		{
-			/*for (int j = 0; j < mapArray[i].tileArray.size(); j++)
-			{
-				if (!debug)
-				{
-					window->draw(mapArray[i].tileArray[j].sprite);
-				}
-				else
-				{
-					window->draw(mapArray[i].tileArray[j].rect);
-				}
-			}*/
 			window->draw(mapArray[i]);
 		}
 	}
@@ -60,6 +54,16 @@ void MapManager::drawMapsLayerTwo(sf::RenderWindow *window, bool debug) {
 			}
 		}
 	}
+}
+
+unsigned int MapManager::getWidth()
+{
+	return width;
+}
+
+unsigned int MapManager::getHeight()
+{
+	return height;
 }
 
 void MapManager::testMapPlayerCollisions(Player *player, int index) {
@@ -108,7 +112,6 @@ void MapManager::testMapProjectileCollisions(Projectile & projectile)
 			}
 		}
 	}
-
 }
 
 MapManager::MapManager()

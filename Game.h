@@ -32,7 +32,8 @@ private:
 	
 
 public:
-
+	void drawGridNodes(sf::RenderWindow *window);
+	void setupGrid();
 	void checkPlayerHitButton();
 	void handlePlayerProjectileCollision();
 	void checkProjectileCollisionWithMaps();

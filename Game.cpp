@@ -28,6 +28,10 @@ void Game::init(sf::RenderWindow *window) {
 	playerHUD.view.setCenter(gameView.getCenter());
 	playerHUD.view.setSize(gameView.getSize().x, gameView.getSize().y);
 
+	std::cout << mapManager.getWidth() << std::endl;
+	std::cout << mapManager.getHeight() << std::endl;
+
+	setupGrid();
 
 	// Be sure to fix this (This is just for testing)
 	DoorSwitch doorSwitch;
@@ -40,6 +44,25 @@ void Game::init(sf::RenderWindow *window) {
 	window->setView(gameView);
 }
 
+void Game::drawGridNodes(sf::RenderWindow *window)
+{
+	window->draw(pathGrid.gridNodes[player->gridPositionX][player->gridPositionY].circle);
+}
+
+void Game::setupGrid()
+{
+	pathGrid.gridNodes.resize(32 * mapManager.getWidth());
+	for (int i = 0; i < pathGrid.gridNodes.size(); i++) {
+		pathGrid.gridNodes[i].resize(18 * mapManager.getHeight());
+	}
+	for (int i = 0; i < pathGrid.gridNodes.size(); i++) {
+		for (int k = 0; k < pathGrid.gridNodes[i].size(); k++) {
+			pathGrid.gridNodes[i][k].setPosition(32 * i, 32 * k);
+			pathGrid.gridNodes[i][k].circle.setPosition(32 * i, 32 * k);
+		}
+	}
+}
+
 void Game::checkPlayerHitButton()
 {
 	if (player->sword.hitBoxActive) {
@@ -50,7 +73,6 @@ void Game::checkPlayerHitButton()
 		}
 	}
 }
-
 
 void Game::handlePlayerProjectileCollision()
 {
@@ -129,6 +151,7 @@ GAMESTATE Game::update(sf::RenderWindow *window, sf::Time elapsed) {
 	//window->draw(player->rect);
 	window->draw(player->sprite);
 	window->draw(player->hurtbox.rect);
+	drawGridNodes(window);
 	for (int i = 0; i < doorSwitches.size(); i++) {
 		window->draw(doorSwitches[i].sprite);
 	}

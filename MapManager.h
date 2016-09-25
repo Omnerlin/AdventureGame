@@ -5,9 +5,13 @@
 class MapManager
 {
 private:
-	
+	unsigned int width = 0;
+	unsigned int height = 0;
 
 public:
+	unsigned int getWidth();
+	unsigned int getHeight();
+
 	void testMapPlayerCollisions(Player *player, int index);
 	void testMapProjectileCollisions(Projectile &projectile);
 
