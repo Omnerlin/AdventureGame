@@ -3,6 +3,7 @@
 class HUD
 {
 private:
+	sf::Font hudFont;
 	sf::Text playerHealth;
 	sf::Text enemiesKilled;
 	sf::RectangleShape backGroundRect;
@@ -10,7 +11,7 @@ private:
 
 public:
 	sf::View view;
-	void update();
+	void update(int playerHealth);
 	void drawElements(sf::RenderWindow * window);
 	HUD();
 	~HUD();

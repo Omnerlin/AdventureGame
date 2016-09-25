@@ -1,5 +1,6 @@
 #pragma once
 #include "Sword.h"
+#include "ProjectileManager.h"
 
 enum class DIRECTION {
 	UP,
@@ -16,17 +17,26 @@ class Player : public Entity
 {
 private:
 	
-	
 	int health = 100;
+	sf::Texture playerTexture;
+	
+	float recoveryTime = 1.5; // in seconds
 
 public:
+	int gridPositionX;
+	int gridPositionY;
 
-	sf::Time hitRecoveryTime;
+	HitBox hurtbox;
+	int getHealth();
+	void setHealth(int health);
+	bool hittable = true;
+	sf::Clock recoveryClock;
+	//sf::Time hitRecoveryTime;
 	bool isAttacking = false;
 	float attackTimeStamp;
 	int animCounter = 0;
 	int counter = 0;
-	float swingSwordTime = 0;
+
 	sf::Clock attackClock;
 
 
@@ -42,10 +52,10 @@ public:
 
 	unsigned int animFrames = 4;
 	unsigned int currentAnimFrame = 4;
-	int oldPositionX;
-	int oldPositionY;
-	int newPositionX;
-	int newPositionY;
+	float oldPositionX;
+	float oldPositionY;
+	float newPositionX;
+	float newPositionY;
 
 	void update(sf::RenderWindow *window, sf::Time elapsed);
 	void animate();

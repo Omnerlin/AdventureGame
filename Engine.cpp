@@ -8,11 +8,6 @@ void Engine::init()
 	state->init(window);
 }
 
-void Engine::switchStates()
-{
-
-}
-
 void Engine::switchStates(GAMESTATE state)
 {
 	//this->state->cleanup();
@@ -67,12 +62,12 @@ void Engine::update()
 			switchStates(currentGamestate);
 		}
 		window->display();
-		//if (fpsElapsed.asSeconds() >= 1.0)
-		//{
-		//	std::cout << fps << std::endl;
-		//	fps = 0;
-		//	fpsClock.restart();
-		//}
+		/*if (fpsElapsed.asMilliseconds() >= 1000)
+		{
+			std::cout << fps << std::endl;
+			fps = 0;
+			fpsClock.restart();
+		}*/
 	}
 }
 
@@ -84,7 +79,6 @@ Engine::Engine()
 
 Engine::~Engine()
 {
-	//state->cleanup();
 	delete state;
 	delete window;
 }

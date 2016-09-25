@@ -16,10 +16,11 @@ Map::Map()
 	
 }
 
-void Map::load(std::string fileName, sf::Texture *texture)
+void Map::load(std::string fileName, sf::Texture *texture, EnemyManager &enemyManager)
 {
 	std::ifstream mapFile("levelMaps\\" + fileName);
 	mapGuide.setup(texture, tileArray[0].getWidth(), tileArray[0].getHeight());
+	mapTexture = *texture;
 
 	mapFile >> width;
 	mapFile >> height;
@@ -31,7 +32,7 @@ void Map::load(std::string fileName, sf::Texture *texture)
 		mapFile >> tileArray[i].collidable;
 		tileArray[i].index = index;
 		tileArray[i].sprite.setTexture(*texture);
-		if (mapGuide.tiles[i].index != -1)
+		if (tileArray[i].index != -1)
 		{
 			tileArray[i].sprite.setTextureRect(sf::IntRect(mapGuide.tiles[tileArray[i].index].rect.getPosition().x, mapGuide.tiles[tileArray[i].index].rect.getPosition().y, tileArray[i].getWidth(), tileArray[i].getHeight()));
 		}
@@ -40,6 +41,11 @@ void Map::load(std::string fileName, sf::Texture *texture)
 			tileArray[i].sprite.setTextureRect(sf::IntRect(0, 0, 0, 0));
 		}
 	}
+
+	tileSetLayerOne.setPrimitiveType(sf::Quads);
+	tileSetLayerOne.resize(width*height * 4);
+	//tileSetLayerTwo.setPrimitiveType(sf::Quads);
+	//tileSetLayerTwo.resize(width*height * 4);
 
 	mapFile >> width;
 	mapFile >> height;
@@ -60,7 +66,87 @@ void Map::load(std::string fileName, sf::Texture *texture)
 		}
 	}
 
+	Enemy enemy;
+	int enemyCount = 0;
+	mapFile >> enemyCount;
+	if (enemyCount > 0) {
+		for (int i = 0; i < enemyCount; i++) {
+			sf::Vector2f position;
+			mapFile >> position.x;
+			mapFile >> position.y;
+			enemy.rect.setPosition(position.x + getPosition().x, position.y + getPosition().y);
+			enemyManager.enemyArray.push_back(enemy);
+		}
+	}
 	mapFile.close();
+
+	// Create Vertex Arrays (layer 1)
+	for (int i = 0; i < width; i++) {
+		for (int k = 0; k < height; k++)
+		{
+
+			int tileIndex = tileArray[i + k * width].index;
+
+			sf::Vertex* quad = &tileSetLayerOne[(i + k * width) * 4];
+
+			quad[0].position = sf::Vector2f(i * tileArray[i].getWidth(), k * tileArray[i].getHeight());
+			quad[1].position = sf::Vector2f((i + 1) * tileArray[i].getWidth(), k * tileArray[i].getHeight());
+			quad[2].position = sf::Vector2f((i + 1) * tileArray[i].getWidth(), (k + 1) * tileArray[i].getHeight());
+			quad[3].position = sf::Vector2f(i * tileArray[i].getWidth(), (k + 1) * tileArray[i].getHeight());
+
+			if (tileIndex != -1) {
+				quad[0].texCoords = mapGuide.tiles[tileIndex].rect.getPosition();
+				quad[1].texCoords = sf::Vector2f(mapGuide.tiles[tileIndex].rect.getPosition().x + mapGuide.tiles[tileIndex].rect.getSize().x, mapGuide.tiles[tileIndex].rect.getPosition().y);
+				quad[2].texCoords = sf::Vector2f(mapGuide.tiles[tileIndex].rect.getPosition().x + mapGuide.tiles[tileIndex].rect.getSize().x, mapGuide.tiles[tileIndex].rect.getPosition().y + mapGuide.tiles[tileIndex].rect.getSize().y);
+				quad[3].texCoords = sf::Vector2f(mapGuide.tiles[tileIndex].rect.getPosition().x, mapGuide.tiles[tileIndex].rect.getPosition().y + mapGuide.tiles[tileIndex].getHeight());
+			}
+			else
+			{
+				quad[0].texCoords = sf::Vector2f(0, 0);
+				quad[1].texCoords = sf::Vector2f(0, 0);
+				quad[2].texCoords = sf::Vector2f(0, 0);
+				quad[3].texCoords = sf::Vector2f(0, 0);
+			}
+		}
+	}
+
+	// Layer 2
+
+	/*for (int i = 0; i < width; i++) {
+		for (int k = 0; k < height; k++)
+		{
+
+			int tileIndex = tileArray2[i + k * width].index;
+
+			sf::Vertex* quad = &tileSetLayerTwo[(i + k * width) * 4];
+			
+			if (tileIndex != -1) {
+			quad[0].position = sf::Vector2f(i * tileArray2[i].getWidth(), k * tileArray2[i].getHeight());
+			quad[1].position = sf::Vector2f((i + 1) * tileArray2[i].getWidth(), k * tileArray2[i].getHeight());
+			quad[2].position = sf::Vector2f((i + 1) * tileArray2[i].getWidth(), (k + 1) * tileArray2[i].getHeight());
+			quad[3].position = sf::Vector2f(i * tileArray2[i].getWidth(), (k + 1) * tileArray2[i].getHeight());
+
+			
+			quad[0].texCoords = mapGuide.tiles[tileIndex].rect.getPosition();
+			quad[1].texCoords = sf::Vector2f(mapGuide.tiles[tileIndex].rect.getPosition().x + mapGuide.tiles[tileIndex].rect.getSize().x, mapGuide.tiles[tileIndex].rect.getPosition().y);
+			quad[2].texCoords = sf::Vector2f(mapGuide.tiles[tileIndex].rect.getPosition().x + mapGuide.tiles[tileIndex].rect.getSize().x, mapGuide.tiles[tileIndex].rect.getPosition().y + mapGuide.tiles[tileIndex].rect.getSize().y);
+			quad[3].texCoords = sf::Vector2f(mapGuide.tiles[tileIndex].rect.getPosition().x, mapGuide.tiles[tileIndex].rect.getPosition().y + mapGuide.tiles[tileIndex].getHeight());
+			}
+			else
+			{
+				quad[0].position = sf::Vector2f(0,0);
+				quad[1].position = sf::Vector2f(0, 0);
+				quad[2].position = sf::Vector2f(0, 0);
+				quad[3].position = sf::Vector2f(0, 0);
+
+				quad[0].texCoords = sf::Vector2f(-1, 0);
+				quad[1].texCoords = sf::Vector2f(-1, 0);
+				quad[2].texCoords = sf::Vector2f(-1, 0);
+				quad[3].texCoords = sf::Vector2f(-1, 0);
+			}
+		}
+	}*/
+
 	placeTiles();
 }
 
@@ -77,7 +163,6 @@ void Map::placeTiles()
 		tileArray[i].sprite.setPosition(tileArray[i].rect.getPosition());
 		tileArray2[i].rect.setPosition((tileArray[i].getWidth() * j) + getPosition().x, (tileArray[i].getHeight() * row) + getPosition().y);
 		tileArray2[i].sprite.setPosition(tileArray[i].rect.getPosition());
-		//std::cout << "X: " << tileArray[i].rect.getPosition().x << "Y: " << tileArray[i].rect.getPosition().y << std::endl;
 	}
 }
 

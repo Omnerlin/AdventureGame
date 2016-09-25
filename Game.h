@@ -6,10 +6,15 @@
 #include "Gamestates.h"
 #include "EnemyManager.h"
 #include "HUD.h"
+#include "DoorSwitch.h"
+#include "PathfindingGrid.h"
+
 class Game : public State
 {
 private:
 
+	PathfindingGrid pathGrid;
+	sf::Texture switchTexture;
 	float viewTimeStamp;
 	bool drawRects = false;
 	Player *player = new Player;
@@ -22,9 +27,15 @@ private:
 	bool debug = false;
 	HUD playerHUD;
 	GAMESTATE returnState = GAMESTATE::GAMELOOP;
+	std::vector<DoorSwitch> doorSwitches;
+
 	
 
 public:
+
+	void checkPlayerHitButton();
+	void handlePlayerProjectileCollision();
+	void checkProjectileCollisionWithMaps();
 	void checkPlayerHitEnemy();
 	void testDebugging();
 	void updateViews(sf::RenderWindow *window, sf::Time elapsed);

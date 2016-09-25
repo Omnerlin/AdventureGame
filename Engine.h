@@ -15,6 +15,7 @@ private:
 	int SCREENWIDTH = 1024;
 	int SCREENHEIGHT = 576;
 	sf::Clock gameClock;
+
 	GAMESTATE currentGamestate = GAMESTATE::MENU;
 
 

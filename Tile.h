@@ -13,13 +13,13 @@ class Tile : public Entity
 {
 private:
 	
-	int width = 32;
-	int height = 32;
+	unsigned int width = 32;
+	unsigned int height = 32;
 	TILETYPE type;
 public:
 	int index;
-	int getWidth();
-	int getHeight();
+	unsigned int getWidth();
+	unsigned int getHeight();
 	void setIndex(int number);
 	bool collidable;
 	Tile();

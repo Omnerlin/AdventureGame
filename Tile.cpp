@@ -25,15 +25,14 @@ void Tile::setIndex(int number) {
 		type = TILETYPE::GRASSFLOOR;
 		collidable = false;
 	}
-
 }
 
-int Tile::getWidth()
+unsigned int Tile::getWidth()
 {
 	return width;
 }
 
-int Tile::getHeight()
+unsigned int Tile::getHeight()
 {
 	return height;
 }

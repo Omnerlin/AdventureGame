@@ -27,8 +27,9 @@ void Menu::updateTitleText(sf::Time elapsed)
 {
 	float timeElapsed = elapsed.asMilliseconds();
 	float deltaTime = timeElapsed - titleTextTimeStamp;
-	titleText.move(0, 0.05 * (sin(elapsed.asMilliseconds() * 0.002)) * deltaTime);
-
+	//titleText.move(0, (0.05 * (sinf(elapsed.asMilliseconds() * 0.002)) * deltaTime));
+	titleText.setPosition(titleText.getPosition().x, originalTitleYPos + (20.f * (sinf(elapsed.asMilliseconds() * 0.002))));
+	//std::cout << titleText.getPosition().y << std::endl;
 	titleTextTimeStamp = elapsed.asMilliseconds();
 }
 

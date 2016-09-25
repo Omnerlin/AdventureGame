@@ -45,6 +45,16 @@ void Player::attack()
 	sword.drawAnim = true;
 }
 
+int Player::getHealth()
+{
+	return health;
+}
+
+void Player::setHealth(int health)
+{
+	this->health = health;
+}
+
 void Player::update(sf::RenderWindow *window, sf::Time elapsed)
 {
 	sf::Time attackTimer = attackClock.getElapsedTime();
@@ -60,8 +70,17 @@ void Player::update(sf::RenderWindow *window, sf::Time elapsed)
 	sword.animSprite.setPosition(rect.getPosition().x + rect.getSize().x / 2, rect.getPosition().y + rect.getSize().y / 2);
 	sword.hitBox.setPosition(rect.getPosition().x + rect.getSize().x / 2, rect.getPosition().y + rect.getSize().y / 2);
 
-
-
+	if (!hittable && recoveryClock.getElapsedTime().asSeconds() <= recoveryTime)
+	{
+		sprite.setColor(sf::Color(255, 100, 100, 150));
+		hittable = false;
+	}
+	else
+	{
+		sprite.setColor(sf::Color(255, 255, 255, 255));
+		hittable = true;
+	}
+	
 	if (angle > 30 && angle < 150)
 	{
 		sword.direction = SWORDDIRECTION::RIGHT;
@@ -75,11 +94,11 @@ void Player::update(sf::RenderWindow *window, sf::Time elapsed)
 
 	if (sword.direction == SWORDDIRECTION::RIGHT)
 	{
-		sword.setPosition(rect.getPosition().x + 32, rect.getPosition().y + 16);
+		sword.setPosition(rect.getPosition().x + 32, rect.getPosition().y + 4);
 	}
 	else if(sword.direction == SWORDDIRECTION::LEFT)
 	{
-		sword.setPosition(rect.getPosition().x - 2, rect.getPosition().y + 16);
+		sword.setPosition(rect.getPosition().x - 2, rect.getPosition().y + 4);
 	}
 
 	if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && !isAttacking)
@@ -92,6 +111,14 @@ void Player::update(sf::RenderWindow *window, sf::Time elapsed)
 		updateAttack(attackTimer);
 	}
 
+	if (health <= 0) {
+		health = 0;
+	}
+
+	sprite.setPosition(rect.getPosition().x - 4, rect.getPosition().y-6);
+	hurtbox.setPosition(sprite.getPosition().x, sprite.getPosition().y - 32);
+	hurtbox.update();
+
 
 }
 
@@ -99,12 +126,16 @@ void Player::update(sf::RenderWindow *window, sf::Time elapsed)
 
 Player::Player()
 {
-	rect.setPosition(75, 300);
+	rect.setPosition(700, 440);
 	rect.setFillColor(sf::Color::White);
-	rect.setOutlineThickness(-4);
+	hurtbox.rect.setSize(sf::Vector2f(32, 64));
+	hurtbox.rect.setFillColor(sf::Color(0,0,255,50));
 	rect.setOutlineColor(sf::Color::Black);
-	rect.setSize(sf::Vector2f(32,32));
-
+	rect.setSize(sf::Vector2f(24,26));
+	sprite.setOrigin(8, 16);
+	sprite.setScale(2.0, 2.0);
+	playerTexture.loadFromFile("media\\theSun.png");
+	sprite.setTexture(playerTexture);
 	
 }
 

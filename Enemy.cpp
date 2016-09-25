@@ -1,15 +1,14 @@
 #include "Enemy.h"
 
-
 void Enemy::attack()
 {
 
 }
 
-void Enemy::update()
+
+void Enemy::update(sf::Time elapsed, const sf::Vector2f &playerPosition)
 {
-	hitRecoveryTime = recoveryClock.getElapsedTime();
-	if (recovering && hitRecoveryTime.asSeconds() < 0.5)
+	if (recovering && recoveryClock.getElapsedTime().asSeconds() < hitRecoveryTime)
 	{
 		rect.setFillColor(sf::Color(200, 0, 0, 255));
 	}
@@ -21,6 +20,12 @@ void Enemy::update()
 
 	hitBox.setPosition(rect.getPosition());
 	hitBox.update();
+	//projectileManager.updateActiveProjectiles(elapsed);
+
+	if (active && !recovering && fireClock.getElapsedTime().asSeconds() > fireCooldown) {
+		projectileManager.fire(sf::Vector2f(hitBox.getPosition().x + rect.getSize().x/2, hitBox.getPosition().y), playerPosition);
+		fireClock.restart();
+	}
 
 	if (health <= 0)
 	{
@@ -34,6 +39,12 @@ Enemy::Enemy()
 {
 	rect.setSize(sf::Vector2f(32, 32));
 	hitBox.rect.setSize(rect.getSize());
+
+	Projectile bullet;
+	for (int i = 0; i < 5; i++)
+	{
+		projectileManager.projectiles.push_back(bullet);
+	}
 }
 
 

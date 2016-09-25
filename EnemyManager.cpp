@@ -7,29 +7,32 @@ void EnemyManager::drawEnemies(sf::RenderWindow *window)
 	{
 		if(enemyArray[i].active == true)
 		window->draw(enemyArray[i].rect);
+
+		for (int j = 0; j < enemyArray[i].projectileManager.projectiles.size(); ++j) {
+			if (enemyArray[i].projectileManager.projectiles[j].getActive() == true) {
+				window->draw(enemyArray[i].projectileManager.projectiles[j].rect);
+			}
+		}
 	}
-	
 }
 
-void EnemyManager::updateEnemies()
+void EnemyManager::updateEnemies(sf::Time elapsed, const sf::Vector2f &playerPosition)
 {
 
 	for (int i = 0; i < enemyArray.size(); ++i)
 	{
-		enemyArray[i].update();
+		enemyArray[i].update(elapsed, playerPosition);
+		enemyArray[i].projectileManager.updateActiveProjectiles(elapsed);
 	}
 }
 
 EnemyManager::EnemyManager()
 {
-	Enemy enemy;
-	enemy.rect.setPosition(200, 400);
-	enemyArray.push_back(enemy);
-	enemy.rect.setPosition(400, 500);
-	enemyArray.push_back(enemy);
+	
 }
 
 
 EnemyManager::~EnemyManager()
 {
+
 }

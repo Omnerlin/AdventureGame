@@ -22,13 +22,11 @@ private:
 	float distance(float minA, float maxA, float minB, float maxB);
 	void project(sf::Vector2f & axis, float & min, float & max);
 	void updatePoints();
+
 public:
 	
 	void update();
 	bool checkIntersect(HitBox &hitbox2);
-
-	
-	
 	sf::RectangleShape rect;
 
 

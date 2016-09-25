@@ -1,22 +1,86 @@
 #include "Game.h"
 
 void Game::init(sf::RenderWindow *window) {
+	mapManager.loadMap("AG_1A.txt", groundTexture, 0, 0, enemyManager);
+	mapManager.loadMap("AG_1B.txt", groundTexture, 1, 0, enemyManager);
+	mapManager.loadMap("AG_1C.txt", groundTexture, 2, 0, enemyManager);
+	mapManager.loadMap("AG_1D.txt", groundTexture, 3, 0, enemyManager);
 
-	mapManager.loadMap("geebo.txt", groundTexture, 0, 0);
-	mapManager.loadMap("map2col.txt", groundTexture, 0, 576);
-	mapManager.loadMap("3rdmap.txt", groundTexture, -1024, 576);
-	mapManager.loadMap("map4.txt", groundTexture, 1024, 576);
+	mapManager.loadMap("AG_2A.txt", groundTexture, 0, 1, enemyManager);
+	mapManager.loadMap("AG_2B.txt", groundTexture, 1, 1, enemyManager);
+	mapManager.loadMap("AG_2C.txt", groundTexture, 2, 1, enemyManager);
+	mapManager.loadMap("AG_2D.txt", groundTexture, 3, 1, enemyManager);
+
+	mapManager.loadMap("AG_3A.txt", groundTexture, 0, 2, enemyManager);
+	mapManager.loadMap("AG_3B.txt", groundTexture, 1, 2, enemyManager);
+	mapManager.loadMap("AG_3C.txt", groundTexture, 2, 2, enemyManager);
+	mapManager.loadMap("AG_3D.txt", groundTexture, 3, 2, enemyManager);
+
+	mapManager.loadMap("AG_4A.txt", groundTexture, 0, 3, enemyManager);
+	mapManager.loadMap("AG_4B.txt", groundTexture, 1, 3, enemyManager);
+	mapManager.loadMap("AG_4C.txt", groundTexture, 2, 3, enemyManager);
+	mapManager.loadMap("AG_4D.txt", groundTexture, 3, 3, enemyManager);
 	
 	currentview.setCenter(mapManager.mapArray[0].view.getCenter());
 	gameView.setSize(mapManager.mapArray[0].view.getSize());
 	gameView.setCenter(mapManager.mapArray[0].view.getCenter());
-	
 
-	window->setView(gameView);
 	playerHUD.view.setCenter(gameView.getCenter());
-	playerHUD.view.setSize(gameView.getSize());
-	playerHUD.view.setViewport(sf::FloatRect(0, 0, 1, 0.1));
+	playerHUD.view.setSize(gameView.getSize().x, gameView.getSize().y);
 
+
+	// Be sure to fix this (This is just for testing)
+	DoorSwitch doorSwitch;
+	doorSwitch.setPosition(600, 400);
+	doorSwitch.updatePosition();
+	doorSwitch.sprite.setTexture(switchTexture);
+	doorSwitches.push_back(doorSwitch);
+	// -----------------------------------------------
+	
+	window->setView(gameView);
+}
+
+void Game::checkPlayerHitButton()
+{
+	if (player->sword.hitBoxActive) {
+		for (int i = 0; i < doorSwitches.size(); i++) {
+			if (doorSwitches[i].getToggleable() && player->sword.hitBox.checkIntersect(doorSwitches[i].hitbox)) {
+				doorSwitches[i].toggleState();
+			}
+		}
+	}
+}
+
+
+void Game::handlePlayerProjectileCollision()
+{
+		for (int i = 0; i < enemyManager.enemyArray.size(); i++) {
+			for (int k = 0; k < enemyManager.enemyArray[i].projectileManager.projectiles.size(); k++)
+			{
+				if (enemyManager.enemyArray[i].projectileManager.projectiles[k].getActive() == true 
+					&& enemyManager.enemyArray[i].projectileManager.projectiles[k].rect.getGlobalBounds().intersects(player->hurtbox.rect.getGlobalBounds())) {
+					if (player->hittable)
+					{
+						player->hittable = false;
+						player->setHealth(player->getHealth() - enemyManager.enemyArray[i].projectileManager.projectiles[k].getDamage());
+						player->recoveryClock.restart();
+					}	
+					enemyManager.enemyArray[i].projectileManager.projectiles[k].setActive(false);
+				}
+			}
+		}
+}
+
+void Game::checkProjectileCollisionWithMaps()
+{
+	for (int i = 0; i < enemyManager.enemyArray.size(); i++) {
+		for (int k = 0; k < enemyManager.enemyArray[i].projectileManager.projectiles.size(); k++)
+		{
+			if (enemyManager.enemyArray[i].projectileManager.projectiles[k].getActive() == true) {
+				mapManager.testMapProjectileCollisions(enemyManager.enemyArray[i].projectileManager.projectiles[k]);
+			}
+		}
+	}
 }
 
 void Game::checkPlayerHitEnemy()
@@ -31,7 +95,7 @@ void Game::checkPlayerHitEnemy()
 				{
 					if (player->sword.hitBox.checkIntersect(enemyManager.enemyArray[i].hitBox))
 					{
-						//enemyManager.enemyArray[i].health -= 1;
+						enemyManager.enemyArray[i].health -= 1;
 						enemyManager.enemyArray[i].recovering = true;
 						enemyManager.enemyArray[i].recoveryClock.restart();
 						std::cout << "Enemy Hit " << std::endl;
@@ -44,25 +108,35 @@ void Game::checkPlayerHitEnemy()
 
 GAMESTATE Game::update(sf::RenderWindow *window, sf::Time elapsed) {
 
-	
 	testDebugging();
 	updateViews(window, elapsed);
 	updatePlayerMovement(player, elapsed);
 	updateActiveMaps();
 	mapManager.drawMapsLayerOne(window, debug);
 	mapManager.drawMapsLayerTwo(window, debug);
+
+	//Handle Logic
+	enemyManager.updateEnemies(elapsed, player->rect.getPosition());
+	checkProjectileCollisionWithMaps();
+	handlePlayerProjectileCollision();
+	checkPlayerHitButton();
+	checkPlayerHitEnemy();
+
+	// Draw Stuff plus some logic
 	enemyManager.drawEnemies(window);
-	enemyManager.updateEnemies();
 	player->update(window, elapsed);
 	player->sword.update(window);
-	checkPlayerHitEnemy();
-	window->draw(player->rect);
+	//window->draw(player->rect);
+	window->draw(player->sprite);
+	window->draw(player->hurtbox.rect);
+	for (int i = 0; i < doorSwitches.size(); i++) {
+		window->draw(doorSwitches[i].sprite);
+	}
 
-	//window->setView(playerHUD.view);
-	//playerHUD.update();
-	//playerHUD.drawElements(window);
-
-	//window->setView(gameView);
+	window->setView(playerHUD.view);
+	playerHUD.update(player->getHealth());
+	playerHUD.drawElements(window);
+	window->setView(gameView);
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::M))
 		{
@@ -75,16 +149,10 @@ void Game::updatePlayerMovement(Player *player, sf::Time elapsed)
 {
 	float timeElapsed = elapsed.asMilliseconds();
 	float deltaTime = timeElapsed - player->timeStamp;
-	//std::cout << timeElapsed << std::endl;
 	
 	player->m_moveSpeed = (player->baseMoveSpeed * deltaTime);
-	//std::cout << player->m_moveSpeed << std::endl;
 	player->oldPositionX = player->rect.getPosition().x;
 	player->oldPositionY = player->rect.getPosition().y;
-
-
-	//std::cout << m_moveSpeed << std::endl;
-
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::W) && sf::Keyboard::isKeyPressed(sf::Keyboard::A))
 	{
@@ -148,6 +216,10 @@ void Game::updatePlayerMovement(Player *player, sf::Time elapsed)
 		}
 	}
 
+	player->gridPositionX = (int)player->rect.getPosition().x / 32;
+	player->gridPositionY = (int)player->rect.getPosition().y / 32;
+	std::cout << "X: " << player->gridPositionX << "Y: " << player->gridPositionY << std::endl;
+	
 	player->newPositionX = player->rect.getPosition().x;
 	player->newPositionY = player->rect.getPosition().y;
 	player->timeStamp = elapsed.asMilliseconds();
@@ -192,14 +264,12 @@ void Game::updateViews(sf::RenderWindow *window, sf::Time elapsed) {
 	gameView.move(((currentview.getCenter().x - gameView.getCenter().x) * 0.01) * deltaTime, ((currentview.getCenter().y - gameView.getCenter().y) * 0.01) * deltaTime);
 	//sf::Vector2f converted = window->mapPixelToCoords(sf::Mouse::getPosition(*window));
 	//gameView.setCenter((player->rect.getPosition().x + converted.x) / 2 , (player->rect.getPosition().y + converted.y) / 2 );
-
 	window->setView(gameView);
 	for (int i = 0; i < mapManager.mapArray.size(); i++) {
 		if (player->rect.getGlobalBounds().intersects(mapManager.mapArray[i].rect.getGlobalBounds())) {
 			currentview = mapManager.mapArray[i].view;
 		}
 	}
-	
 	viewTimeStamp = elapsed.asMilliseconds();
 }
 
@@ -207,6 +277,7 @@ Game::Game()
 {
 	groundTexture->loadFromFile("media\\tileMap.png");
 	std::cout << "Constructor Called";
+	switchTexture.loadFromFile("media\\daButton.png");
 }
 
 
@@ -215,4 +286,5 @@ Game::~Game()
 	std::cout << "Game Destructor Called" << std::endl;
 	delete groundTexture; std::cout << "Texture Deleted" << std::endl;
 	delete player; std::cout << "Player Deleted" << std::endl;
+	
 }
