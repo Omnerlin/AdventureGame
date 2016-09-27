@@ -19,6 +19,7 @@ void MapManager::loadMap(std::string fileName, sf::Texture *texture, float x, fl
 	height = map.getPosition().y / 576 + 1;
 }
 
+
 void MapManager::addMap(Map map) {
 	mapArray.push_back(map);
 }
@@ -26,8 +27,8 @@ void MapManager::addMap(Map map) {
 void MapManager::drawMapsLayerOne(sf::RenderWindow *window, bool debug) { 
 	if (mapArray.size() < 1) { return; }
 	for (int i = 0; i < mapArray.size(); i++) {
-		if (mapArray[i].active)
-		{
+		if (mapArray[i].active) {
+
 			window->draw(mapArray[i]);
 		}
 	}
@@ -36,10 +37,8 @@ void MapManager::drawMapsLayerOne(sf::RenderWindow *window, bool debug) {
 void MapManager::drawMapsLayerTwo(sf::RenderWindow *window, bool debug) {
 	if (mapArray.size() < 1) { return; }
 	for (int i = 0; i < mapArray.size(); i++) {
-		if (mapArray[i].active)
-		{
-			for (int j = 0; j < mapArray[i].tileArray2.size(); j++)
-			{
+		/*if (mapArray[i].active) {
+			for (int j = 0; j < mapArray[i].tileArray2.size(); j++) {
 				if (!debug)
 				{
 					if (mapArray[i].tileArray2[j].index != -1)
@@ -52,7 +51,7 @@ void MapManager::drawMapsLayerTwo(sf::RenderWindow *window, bool debug) {
 					window->draw(mapArray[i].tileArray2[j].rect);
 				}
 			}
-		}
+		}*/
 	}
 }
 
@@ -69,7 +68,7 @@ unsigned int MapManager::getHeight()
 void MapManager::testMapPlayerCollisions(Player *player, int index) {
 	
 	for (int i = 0; i < mapArray.size(); i++) {
-		if (mapArray[i].active){
+		if (mapArray[i].active) {
 			for (int j = 0; j < mapArray[i].tileArray.size(); j++) {
 				if (mapArray[i].tileArray[j].collidable) {
 					if (player->rect.getGlobalBounds().intersects(mapArray[i].tileArray[j].rect.getGlobalBounds())) {

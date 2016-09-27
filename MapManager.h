@@ -16,6 +16,7 @@ public:
 	void testMapProjectileCollisions(Projectile &projectile);
 
 	std::vector<Map> mapArray;
+
 	void loadMap(std::string fileName, sf::Texture *texture, float x, float y, EnemyManager &enemyManager);
 	void addMap(Map map);
 	void drawMapsLayerOne(sf::RenderWindow *window, bool debug);

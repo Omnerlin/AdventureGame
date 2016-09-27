@@ -135,7 +135,6 @@ GAMESTATE Game::update(sf::RenderWindow *window, sf::Time elapsed) {
 	updatePlayerMovement(player, elapsed);
 	updateActiveMaps();
 	mapManager.drawMapsLayerOne(window, debug);
-	mapManager.drawMapsLayerTwo(window, debug);
 
 	//Handle Logic
 	enemyManager.updateEnemies(elapsed, player->rect.getPosition());
@@ -298,7 +297,7 @@ void Game::updateViews(sf::RenderWindow *window, sf::Time elapsed) {
 
 Game::Game()
 {
-	groundTexture->loadFromFile("media\\tileMap.png");
+	groundTexture->loadFromFile("media\\tileMap2.png");
 	std::cout << "Constructor Called";
 	switchTexture.loadFromFile("media\\daButton.png");
 }

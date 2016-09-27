@@ -1,5 +1,10 @@
 #include "GridNode.h"
 
+int GridNode::getFCost()
+{
+	return gCost + hCost;
+}
+
 GridNode::GridNode()
 {
 	setPosition(0, 0);

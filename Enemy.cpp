@@ -5,7 +5,6 @@ void Enemy::attack()
 
 }
 
-
 void Enemy::update(sf::Time elapsed, const sf::Vector2f &playerPosition)
 {
 	if (recovering && recoveryClock.getElapsedTime().asSeconds() < hitRecoveryTime)
@@ -20,7 +19,9 @@ void Enemy::update(sf::Time elapsed, const sf::Vector2f &playerPosition)
 
 	hitBox.setPosition(rect.getPosition());
 	hitBox.update();
-	//projectileManager.updateActiveProjectiles(elapsed);
+
+	gridPositionX = rect.getPosition().x / 32;
+	gridPositionY = rect.getPosition().y / 32;
 
 	if (active && !recovering && fireClock.getElapsedTime().asSeconds() > fireCooldown) {
 		projectileManager.fire(sf::Vector2f(hitBox.getPosition().x + rect.getSize().x/2, hitBox.getPosition().y), playerPosition);

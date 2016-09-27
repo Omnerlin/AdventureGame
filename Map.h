@@ -14,7 +14,7 @@ private:
 		states.transform *= getTransform();
 		states.texture = &mapTexture;
 		target.draw(tileSetLayerOne, states);
-		//target.draw(tileSetLayerTwo, states);
+		target.draw(tileSetLayerTwo, states);
 
 	}
 	
@@ -27,6 +27,7 @@ private:
 
 public:
 
+	sf::Vector2i origin;
 	MapGuide mapGuide;
 	std::vector<Tile> tileArray;
 	std::vector<Tile> tileArray2;
