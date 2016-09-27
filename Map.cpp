@@ -44,8 +44,8 @@ void Map::load(std::string fileName, sf::Texture *texture, EnemyManager &enemyMa
 
 	tileSetLayerOne.setPrimitiveType(sf::Quads);
 	tileSetLayerOne.resize(width*height * 4);
-	//tileSetLayerTwo.setPrimitiveType(sf::Quads);
-	//tileSetLayerTwo.resize(width*height * 4);
+	tileSetLayerTwo.setPrimitiveType(sf::Quads);
+	tileSetLayerTwo.resize(width*height * 4);
 
 	mapFile >> width;
 	mapFile >> height;
@@ -112,10 +112,9 @@ void Map::load(std::string fileName, sf::Texture *texture, EnemyManager &enemyMa
 
 	// Layer 2
 
-	/*for (int i = 0; i < width; i++) {
+	for (int i = 0; i < width; i++) {
 		for (int k = 0; k < height; k++)
 		{
-
 			int tileIndex = tileArray2[i + k * width].index;
 
 			sf::Vertex* quad = &tileSetLayerTwo[(i + k * width) * 4];
@@ -134,19 +133,13 @@ void Map::load(std::string fileName, sf::Texture *texture, EnemyManager &enemyMa
 			}
 			else
 			{
-				quad[0].position = sf::Vector2f(0,0);
-				quad[1].position = sf::Vector2f(0, 0);
-				quad[2].position = sf::Vector2f(0, 0);
-				quad[3].position = sf::Vector2f(0, 0);
-
-				quad[0].texCoords = sf::Vector2f(-1, 0);
-				quad[1].texCoords = sf::Vector2f(-1, 0);
-				quad[2].texCoords = sf::Vector2f(-1, 0);
-				quad[3].texCoords = sf::Vector2f(-1, 0);
+				quad[0].texCoords = sf::Vector2f(32, 0);
+				quad[1].texCoords = sf::Vector2f(64, 0);
+				quad[2].texCoords = sf::Vector2f(64, 32);
+				quad[3].texCoords = sf::Vector2f(32, 32);
 			}
 		}
-	}*/
-
+	}
 	placeTiles();
 }
 
@@ -175,6 +168,8 @@ int Map::getHeight() {
 void Map::setOrigin(float x, float y)
 {
 	setPosition(x, y);
+	origin.x = x / 1024;
+	origin.y = y / 576;
 	placeTiles();
 }
 

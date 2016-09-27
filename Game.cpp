@@ -1,26 +1,30 @@
 #include "Game.h"
 
 void Game::init(sf::RenderWindow *window) {
-	mapManager.loadMap("AG_1A.txt", groundTexture, 0, 0, enemyManager);
-	mapManager.loadMap("AG_1B.txt", groundTexture, 1, 0, enemyManager);
-	mapManager.loadMap("AG_1C.txt", groundTexture, 2, 0, enemyManager);
-	mapManager.loadMap("AG_1D.txt", groundTexture, 3, 0, enemyManager);
+	bool doneLoading = false;
 
-	mapManager.loadMap("AG_2A.txt", groundTexture, 0, 1, enemyManager);
-	mapManager.loadMap("AG_2B.txt", groundTexture, 1, 1, enemyManager);
-	mapManager.loadMap("AG_2C.txt", groundTexture, 2, 1, enemyManager);
-	mapManager.loadMap("AG_2D.txt", groundTexture, 3, 1, enemyManager);
+		mapManager.loadMap("AG_1A.txt", groundTexture, 0, 0, enemyManager);
+		mapManager.loadMap("AG_1B.txt", groundTexture, 1, 0, enemyManager);
+		mapManager.loadMap("AG_1C.txt", groundTexture, 2, 0, enemyManager);
+		mapManager.loadMap("AG_1D.txt", groundTexture, 3, 0, enemyManager);
 
-	mapManager.loadMap("AG_3A.txt", groundTexture, 0, 2, enemyManager);
-	mapManager.loadMap("AG_3B.txt", groundTexture, 1, 2, enemyManager);
-	mapManager.loadMap("AG_3C.txt", groundTexture, 2, 2, enemyManager);
-	mapManager.loadMap("AG_3D.txt", groundTexture, 3, 2, enemyManager);
+		mapManager.loadMap("AG_2A.txt", groundTexture, 0, 1, enemyManager);
+		mapManager.loadMap("AG_2B.txt", groundTexture, 1, 1, enemyManager);
+		mapManager.loadMap("AG_2C.txt", groundTexture, 2, 1, enemyManager);
+		mapManager.loadMap("AG_2D.txt", groundTexture, 3, 1, enemyManager);
 
-	mapManager.loadMap("AG_4A.txt", groundTexture, 0, 3, enemyManager);
-	mapManager.loadMap("AG_4B.txt", groundTexture, 1, 3, enemyManager);
-	mapManager.loadMap("AG_4C.txt", groundTexture, 2, 3, enemyManager);
-	mapManager.loadMap("AG_4D.txt", groundTexture, 3, 3, enemyManager);
+		mapManager.loadMap("AG_3AD.txt", groundTexture, 0, 2, enemyManager);
+		mapManager.loadMap("AG_3B.txt", groundTexture, 1, 2, enemyManager);
+		mapManager.loadMap("AG_3C.txt", groundTexture, 2, 2, enemyManager);
+		mapManager.loadMap("AG_3D.txt", groundTexture, 3, 2, enemyManager);
+
+		mapManager.loadMap("AG_4A.txt", groundTexture, 0, 3, enemyManager);
+		mapManager.loadMap("AG_4B.txt", groundTexture, 1, 3, enemyManager);
+		mapManager.loadMap("AG_4C.txt", groundTexture, 2, 3, enemyManager);
+		mapManager.loadMap("AG_4D.txt", groundTexture, 3, 3, enemyManager);
 	
+		std::cout << mapManager.mapArray.size() << std::endl;
+
 	currentview.setCenter(mapManager.mapArray[0].view.getCenter());
 	gameView.setSize(mapManager.mapArray[0].view.getSize());
 	gameView.setCenter(mapManager.mapArray[0].view.getCenter());
@@ -42,6 +46,8 @@ void Game::init(sf::RenderWindow *window) {
 	// -----------------------------------------------
 	
 	window->setView(gameView);
+
+	mapManager.setupTileMap();
 }
 
 void Game::drawGridNodes(sf::RenderWindow *window)
@@ -135,7 +141,6 @@ GAMESTATE Game::update(sf::RenderWindow *window, sf::Time elapsed) {
 	updatePlayerMovement(player, elapsed);
 	updateActiveMaps();
 	mapManager.drawMapsLayerOne(window, debug);
-	mapManager.drawMapsLayerTwo(window, debug);
 
 	//Handle Logic
 	enemyManager.updateEnemies(elapsed, player->rect.getPosition());
@@ -152,9 +157,11 @@ GAMESTATE Game::update(sf::RenderWindow *window, sf::Time elapsed) {
 	window->draw(player->sprite);
 	window->draw(player->hurtbox.rect);
 	drawGridNodes(window);
+
 	for (int i = 0; i < doorSwitches.size(); i++) {
 		window->draw(doorSwitches[i].sprite);
 	}
+	//window->draw(mapManager.tileMap[player->gridPositionX][player->gridPositionY].rect);
 
 	window->setView(playerHUD.view);
 	playerHUD.update(player->getHealth());
@@ -298,7 +305,7 @@ void Game::updateViews(sf::RenderWindow *window, sf::Time elapsed) {
 
 Game::Game()
 {
-	groundTexture->loadFromFile("media\\tileMap.png");
+	groundTexture->loadFromFile("media\\tileMap2.png");
 	std::cout << "Constructor Called";
 	switchTexture.loadFromFile("media\\daButton.png");
 }

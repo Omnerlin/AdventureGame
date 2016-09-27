@@ -20,9 +20,11 @@ public:
 	bool recovering = false;
 	HitBox hitBox;
 	ProjectileManager projectileManager;
+	int gridPositionX;
+	int gridPositionY;
 
 	sf::Clock fireClock;
-	float fireCooldown = 2; // in seconds
+	float fireCooldown = 1; // in seconds
 
 	sf::Clock recoveryClock;
 	float hitRecoveryTime = 0.5; // in seconds
