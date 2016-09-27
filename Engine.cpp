@@ -49,7 +49,6 @@ void Engine::update()
 				if (event.mouseButton.button == sf::Mouse::Left) {
 
 				}
-				//std::cout << "Mouse Button Released" << std::endl;
 			}
 		}
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {

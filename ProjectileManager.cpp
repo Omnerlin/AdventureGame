@@ -34,6 +34,9 @@ void ProjectileManager::updateActiveProjectiles(sf::Time elapsed)
 
 			projectiles[i].rect.setPosition(projectiles[i].getPosition());
 
+			projectiles[i].gridPosition.x = projectiles[i].getPosition().x / 32;
+			projectiles[i].gridPosition.y = projectiles[i].getPosition().y / 32;
+
 		}
 		projectiles[i].timeStamp = elapsed.asMilliseconds();
 	}

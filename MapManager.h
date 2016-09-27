@@ -2,11 +2,13 @@
 #include "Map.h"
 #include "Player.h"
 #include "Projectile.h"
+
 class MapManager
 {
 private:
 	unsigned int width = 0;
 	unsigned int height = 0;
+
 
 public:
 	unsigned int getWidth();
@@ -16,7 +18,9 @@ public:
 	void testMapProjectileCollisions(Projectile &projectile);
 
 	std::vector<Map> mapArray;
+	std::vector<std::vector<Tile>> tileMap;
 
+	void setupTileMap();
 	void loadMap(std::string fileName, sf::Texture *texture, float x, float y, EnemyManager &enemyManager);
 	void addMap(Map map);
 	void drawMapsLayerOne(sf::RenderWindow *window, bool debug);

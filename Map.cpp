@@ -115,7 +115,6 @@ void Map::load(std::string fileName, sf::Texture *texture, EnemyManager &enemyMa
 	for (int i = 0; i < width; i++) {
 		for (int k = 0; k < height; k++)
 		{
-
 			int tileIndex = tileArray2[i + k * width].index;
 
 			sf::Vertex* quad = &tileSetLayerTwo[(i + k * width) * 4];
@@ -141,7 +140,6 @@ void Map::load(std::string fileName, sf::Texture *texture, EnemyManager &enemyMa
 			}
 		}
 	}
-
 	placeTiles();
 }
 
@@ -170,6 +168,8 @@ int Map::getHeight() {
 void Map::setOrigin(float x, float y)
 {
 	setPosition(x, y);
+	origin.x = x / 1024;
+	origin.y = y / 576;
 	placeTiles();
 }
 

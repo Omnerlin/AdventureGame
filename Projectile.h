@@ -24,6 +24,7 @@ public:
 	void setActive(bool boolio);
 	void setSpeed(sf::Vector2f &speed);
 	sf::Vector2f direction;
+	sf::Vector2i gridPosition;
 	Projectile();
 	~Projectile();
 };
