@@ -4,12 +4,14 @@
 class GridNode : public sf::Transformable
 {
 private:
-	bool active;
-	bool traversible;
+	
 
 public:
 	int gCost = 0;
 	int hCost = 0;
+
+	bool active = true;
+	bool traversible = true;
 
 	int getFCost();
 	GridNode();

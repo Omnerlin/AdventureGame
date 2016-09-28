@@ -8,6 +8,10 @@ private:
 
 public:
 	std::vector<std::vector<GridNode>> gridNodes; // Vector array of nodes for the grid
+
+	std::vector<GridNode> openNodes;
+	std::vector<GridNode> closedNodes;
+
 	PathfindingGrid();
 	~PathfindingGrid();
 };

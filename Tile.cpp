@@ -36,7 +36,7 @@ unsigned int Tile::getHeight()
 Tile::Tile() : collidable(false)
 {
 	rect.setSize(sf::Vector2f(width, height));
-	rect.setFillColor(sf::Color::Yellow);
+	rect.setFillColor(sf::Color(255,255,255,100));
 	rect.setPosition(0, 0);
 	sprite.setPosition(rect.getPosition());
 	sprite.setTextureRect(sf::IntRect(32 * 0, 0, 32, 32));

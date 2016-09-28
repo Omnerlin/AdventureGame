@@ -1,7 +1,6 @@
 #include "Game.h"
 
 void Game::init(sf::RenderWindow *window) {
-	bool doneLoading = false;
 
 		mapManager.loadMap("AG_1A.txt", groundTexture, 0, 0, enemyManager);
 		mapManager.loadMap("AG_1B.txt", groundTexture, 1, 0, enemyManager);
@@ -13,7 +12,7 @@ void Game::init(sf::RenderWindow *window) {
 		mapManager.loadMap("AG_2C.txt", groundTexture, 2, 1, enemyManager);
 		mapManager.loadMap("AG_2D.txt", groundTexture, 3, 1, enemyManager);
 
-		mapManager.loadMap("AG_3AD.txt", groundTexture, 0, 2, enemyManager);
+		mapManager.loadMap("AG_3AD.txt",groundTexture, 0, 2, enemyManager);
 		mapManager.loadMap("AG_3B.txt", groundTexture, 1, 2, enemyManager);
 		mapManager.loadMap("AG_3C.txt", groundTexture, 2, 2, enemyManager);
 		mapManager.loadMap("AG_3D.txt", groundTexture, 3, 2, enemyManager);
@@ -35,6 +34,7 @@ void Game::init(sf::RenderWindow *window) {
 	std::cout << mapManager.getWidth() << std::endl;
 	std::cout << mapManager.getHeight() << std::endl;
 
+	mapManager.setupTileMap();
 	setupGrid();
 
 	// Be sure to fix this (This is just for testing)
@@ -46,8 +46,11 @@ void Game::init(sf::RenderWindow *window) {
 	// -----------------------------------------------
 	
 	window->setView(gameView);
+}
 
-	mapManager.setupTileMap();
+void Game::enemyFindPath(Enemy & enemy, sf::Vector2f &target)
+{
+
 }
 
 void Game::drawGridNodes(sf::RenderWindow *window)
@@ -57,14 +60,20 @@ void Game::drawGridNodes(sf::RenderWindow *window)
 
 void Game::setupGrid()
 {
-	pathGrid.gridNodes.resize(32 * mapManager.getWidth());
+	pathGrid.gridNodes.resize(mapManager.tileMap.size());
 	for (int i = 0; i < pathGrid.gridNodes.size(); i++) {
-		pathGrid.gridNodes[i].resize(18 * mapManager.getHeight());
+		pathGrid.gridNodes[i].resize(mapManager.tileMap[i].size());
 	}
+
+
 	for (int i = 0; i < pathGrid.gridNodes.size(); i++) {
-		for (int k = 0; k < pathGrid.gridNodes[i].size(); k++) {
-			pathGrid.gridNodes[i][k].setPosition(32 * i, 32 * k);
-			pathGrid.gridNodes[i][k].circle.setPosition(32 * i, 32 * k);
+		for (int j = 0; j < pathGrid.gridNodes[i].size(); j++) {
+			if (mapManager.tileMap[i][j].collidable) {
+				pathGrid.gridNodes[i][j].traversible = false;
+				pathGrid.gridNodes[i][j].active = false;
+			}
+			pathGrid.gridNodes[i][j].setPosition(mapManager.tileMap[i][j].rect.getPosition());
+			pathGrid.gridNodes[i][j].circle.setPosition(mapManager.tileMap[i][j].rect.getPosition());
 		}
 	}
 }
@@ -154,6 +163,15 @@ GAMESTATE Game::update(sf::RenderWindow *window, sf::Time elapsed) {
 	player->update(window, elapsed);
 	player->sword.update(window);
 	//window->draw(player->rect);
+
+	/*for (int i = -1; i < 2; i++) {
+		for (int j = -1; j < 2; j++) {
+			int indexX = player->gridPositionX + i;
+			int indexY = player->gridPositionY + j;
+			window->draw(mapManager.tileMap[indexX][indexY].rect);
+		}
+	}*/
+
 	window->draw(player->sprite);
 	window->draw(player->hurtbox.rect);
 	drawGridNodes(window);
