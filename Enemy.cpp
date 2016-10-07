@@ -20,8 +20,8 @@ void Enemy::update(sf::Time elapsed, const sf::Vector2f &playerPosition)
 	hitBox.setPosition(rect.getPosition());
 	hitBox.update();
 
-	gridPositionX = rect.getPosition().x / 32;
-	gridPositionY = rect.getPosition().y / 32;
+	gridPosition.x = rect.getPosition().x / 32;
+	gridPosition.y = rect.getPosition().y / 32;
 
 	if (active && !recovering && fireClock.getElapsedTime().asSeconds() > fireCooldown) {
 		projectileManager.fire(sf::Vector2f(hitBox.getPosition().x + rect.getSize().x/2, hitBox.getPosition().y), playerPosition);

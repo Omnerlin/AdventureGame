@@ -32,7 +32,7 @@ private:
 	
 
 public:
-	void enemyFindPath(Enemy &enemy, sf::Vector2f &target);
+	void enemyFindPath();
 	void drawGridNodes(sf::RenderWindow *window);
 	void setupGrid();
 	void checkPlayerHitButton();

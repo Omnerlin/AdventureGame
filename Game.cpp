@@ -12,7 +12,7 @@ void Game::init(sf::RenderWindow *window) {
 		mapManager.loadMap("AG_2C.txt", groundTexture, 2, 1, enemyManager);
 		mapManager.loadMap("AG_2D.txt", groundTexture, 3, 1, enemyManager);
 
-		mapManager.loadMap("AG_3AD.txt",groundTexture, 0, 2, enemyManager);
+		mapManager.loadMap("AG_3A.txt", groundTexture, 0, 2, enemyManager);
 		mapManager.loadMap("AG_3B.txt", groundTexture, 1, 2, enemyManager);
 		mapManager.loadMap("AG_3C.txt", groundTexture, 2, 2, enemyManager);
 		mapManager.loadMap("AG_3D.txt", groundTexture, 3, 2, enemyManager);
@@ -22,7 +22,7 @@ void Game::init(sf::RenderWindow *window) {
 		mapManager.loadMap("AG_4C.txt", groundTexture, 2, 3, enemyManager);
 		mapManager.loadMap("AG_4D.txt", groundTexture, 3, 3, enemyManager);
 	
-		std::cout << mapManager.mapArray.size() << std::endl;
+	//	std::cout << mapManager.mapArray.size() << std::endl;
 
 	currentview.setCenter(mapManager.mapArray[0].view.getCenter());
 	gameView.setSize(mapManager.mapArray[0].view.getSize());
@@ -31,8 +31,8 @@ void Game::init(sf::RenderWindow *window) {
 	playerHUD.view.setCenter(gameView.getCenter());
 	playerHUD.view.setSize(gameView.getSize().x, gameView.getSize().y);
 
-	std::cout << mapManager.getWidth() << std::endl;
-	std::cout << mapManager.getHeight() << std::endl;
+	//std::cout << mapManager.getWidth() << std::endl;
+	//std::cout << mapManager.getHeight() << std::endl;
 
 	mapManager.setupTileMap();
 	setupGrid();
@@ -48,14 +48,23 @@ void Game::init(sf::RenderWindow *window) {
 	window->setView(gameView);
 }
 
-void Game::enemyFindPath(Enemy & enemy, sf::Vector2f &target)
+void Game::enemyFindPath()
 {
-
+	for (int i = 0; i < enemyManager.enemyArray.size(); i++) {
+//	enemyManager.enemyArray[i].currentPath = pathGrid.findPath(enemyManager.enemyArray[i].gridPosition, player->gridPosition);
+	}
+	
 }
 
 void Game::drawGridNodes(sf::RenderWindow *window)
 {
-	window->draw(pathGrid.gridNodes[player->gridPositionX][player->gridPositionY].circle);
+	for (int i = 0; i < enemyManager.enemyArray.size(); ++i) {
+		for (int j = 0; j < enemyManager.enemyArray[i].currentPath.size(); ++j) {
+			window->draw(enemyManager.enemyArray[i].currentPath[j].circle);
+		}
+		window->draw(pathGrid.gridNodes[player->gridPosition.x][player->gridPosition.y].circle);
+	}
+	
 }
 
 void Game::setupGrid()
@@ -73,6 +82,8 @@ void Game::setupGrid()
 				pathGrid.gridNodes[i][j].active = false;
 			}
 			pathGrid.gridNodes[i][j].setPosition(mapManager.tileMap[i][j].rect.getPosition());
+			pathGrid.gridNodes[i][j].gridPosition.x = ((int)pathGrid.gridNodes[i][j].getPosition().x / 32);
+			pathGrid.gridNodes[i][j].gridPosition.y = ((int)pathGrid.gridNodes[i][j].getPosition().y / 32);
 			pathGrid.gridNodes[i][j].circle.setPosition(mapManager.tileMap[i][j].rect.getPosition());
 		}
 	}
@@ -94,15 +105,19 @@ void Game::handlePlayerProjectileCollision()
 		for (int i = 0; i < enemyManager.enemyArray.size(); i++) {
 			for (int k = 0; k < enemyManager.enemyArray[i].projectileManager.projectiles.size(); k++)
 			{
-				if (enemyManager.enemyArray[i].projectileManager.projectiles[k].getActive() == true 
-					&& enemyManager.enemyArray[i].projectileManager.projectiles[k].rect.getGlobalBounds().intersects(player->hurtbox.rect.getGlobalBounds())) {
-					if (player->hittable)
-					{
-						player->hittable = false;
-						player->setHealth(player->getHealth() - enemyManager.enemyArray[i].projectileManager.projectiles[k].getDamage());
-						player->recoveryClock.restart();
-					}	
-					enemyManager.enemyArray[i].projectileManager.projectiles[k].setActive(false);
+				if (abs(enemyManager.enemyArray[i].projectileManager.projectiles[k].rect.getPosition().x - player->rect.getPosition().x) <= 85 &&
+					abs(enemyManager.enemyArray[i].projectileManager.projectiles[k].rect.getPosition().y - player->rect.getPosition().y) <= 85)
+				{
+					if (enemyManager.enemyArray[i].projectileManager.projectiles[k].getActive() == true
+						&& enemyManager.enemyArray[i].projectileManager.projectiles[k].rect.getGlobalBounds().intersects(player->hurtbox.rect.getGlobalBounds())) {
+						if (player->hittable)
+						{
+							player->hittable = false;
+							player->setHealth(player->getHealth() - enemyManager.enemyArray[i].projectileManager.projectiles[k].getDamage());
+							player->recoveryClock.restart();
+						}
+						enemyManager.enemyArray[i].projectileManager.projectiles[k].setActive(false);
+					}
 				}
 			}
 		}
@@ -157,25 +172,25 @@ GAMESTATE Game::update(sf::RenderWindow *window, sf::Time elapsed) {
 	handlePlayerProjectileCollision();
 	checkPlayerHitButton();
 	checkPlayerHitEnemy();
-
+	
 	// Draw Stuff plus some logic
 	enemyManager.drawEnemies(window);
 	player->update(window, elapsed);
 	player->sword.update(window);
 	//window->draw(player->rect);
 
-	/*for (int i = -1; i < 2; i++) {
+	for (int i = -1; i < 2; i++) {
 		for (int j = -1; j < 2; j++) {
-			int indexX = player->gridPositionX + i;
-			int indexY = player->gridPositionY + j;
+			int indexX = player->gridPosition.x + i;
+			int indexY = player->gridPosition.y + j;
 			window->draw(mapManager.tileMap[indexX][indexY].rect);
 		}
-	}*/
+	}
 
 	window->draw(player->sprite);
 	window->draw(player->hurtbox.rect);
 	drawGridNodes(window);
-
+	//enemyFindPath();
 	for (int i = 0; i < doorSwitches.size(); i++) {
 		window->draw(doorSwitches[i].sprite);
 	}
@@ -264,8 +279,8 @@ void Game::updatePlayerMovement(Player *player, sf::Time elapsed)
 		}
 	}
 
-	player->gridPositionX = (int)player->rect.getPosition().x / 32;
-	player->gridPositionY = (int)player->rect.getPosition().y / 32;
+	player->gridPosition.x = (int)player->rect.getPosition().x / 32;
+	player->gridPosition.y = (int)player->rect.getPosition().y / 32;
 	//std::cout << "X: " << player->gridPositionX << "Y: " << player->gridPositionY << std::endl;
 	
 	player->newPositionX = player->rect.getPosition().x;

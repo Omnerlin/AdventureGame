@@ -5,6 +5,16 @@ int GridNode::getFCost()
 	return gCost + hCost;
 }
 
+bool GridNode::operator==(const GridNode & other) const
+{
+	return (this->getPosition() == other.getPosition());
+}
+
+bool GridNode::operator!=(const GridNode & other) const
+{
+	return !(*this == other);
+}
+
 GridNode::GridNode()
 {
 	setPosition(0, 0);
@@ -15,6 +25,7 @@ GridNode::GridNode()
 GridNode::GridNode(sf::Vector2f &position)
 {
 	setPosition(position);
+	delete parent;
 	circle.setPosition(position);
 }
 

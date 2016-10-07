@@ -4,7 +4,7 @@ void Engine::init()
 {
 	window->create(sf::VideoMode(SCREENWIDTH, SCREENHEIGHT), "AdventureGame");
 	//window->setFramerateLimit(30);
-	//window->setVerticalSyncEnabled(true);
+	window->setVerticalSyncEnabled(true);
 	state->init(window);
 }
 

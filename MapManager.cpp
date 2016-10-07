@@ -31,10 +31,10 @@ void MapManager::loadMap(std::string fileName, sf::Texture *texture, float x, fl
 	map.drawAndCollisionRect.setSize(sf::Vector2f(map.view.getSize().x + map.tileArray[0].getWidth()*8, map.view.getSize().y + map.tileArray[0].getHeight()*8));
 	mapArray.push_back(map);
 	if(map.getPosition().x / 1024 > width)
-	width = map.getPosition().x / 1024 + 1; // Add one, since origins start at zero.
+	width = (int)map.getPosition().x / 1024 + 1; // Add one, since origins start at zero.
 
 	if(map.getPosition().y > height)
-	height = map.getPosition().y / 576 + 1;
+	height = (int)map.getPosition().y / 576 + 1;
 }
 
 
@@ -134,8 +134,8 @@ void MapManager::testMapPlayerCollisions(Player *player, int index) {
 
 	for (int i = -1; i < 2; i++) {
 		for (int j = -1; j < 2; j++) {
-			int indexX = player->gridPositionX + i;
-			int indexY = player->gridPositionY + j;
+			int indexX = player->gridPosition.x + i;
+			int indexY = player->gridPosition.y + j;
 			if (tileMap[indexX][indexY].collidable) {
 				if (player->rect.getGlobalBounds().intersects(tileMap[indexX][indexY].rect.getGlobalBounds())) {
 					if (index == 1) {

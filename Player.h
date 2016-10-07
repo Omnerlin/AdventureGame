@@ -23,8 +23,9 @@ private:
 	float recoveryTime = 1.5; // in seconds
 
 public:
-	int gridPositionX;
-	int gridPositionY;
+//	int gridPositionX;
+//	int gridPositionY;
+	sf::Vector2i gridPosition;
 
 	HitBox hurtbox;
 	int getHealth();
