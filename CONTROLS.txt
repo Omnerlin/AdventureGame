@@ -1,0 +1,21 @@
+CONTROLS:
+
+CAMERA
+Right Click- Moves camera based on what corner of the screen the mouse is in
+
+PLACING/REMOVING TILES
+L - switch layers
+Left Click - Place/Select Tiles
+Q - Delete Tile
+
+COLLISION
+C - Toggle collision map visibility
+A - Place collision (Must be on first layer)
+S - Remove collision (Must be on first layer)
+
+MAP LAYER VISIBILITY
+Z - Toggle Layer One Visibility
+X - Toggle layer 2 Visibility
+
+T - Save Tilemap
+
